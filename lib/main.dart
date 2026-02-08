@@ -4,14 +4,14 @@ import 'package:protolove/routes/routes.dart';
 
 import 'screens/screen.dart';
 import 'service/service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://ytmiiwnvywijxktrzcdw.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0bWlpd252eXdpanhrdHJ6Y2R3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDQ2NjE2NiwiZXhwIjoyMDc2MDQyMTY2fQ.7zti7XjxzzbCJBVy6pafK2NOBR_wMHDJKZe6qaMRbL8',
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
   runApp(const MyApp());
 }
