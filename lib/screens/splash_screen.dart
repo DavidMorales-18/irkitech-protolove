@@ -21,14 +21,44 @@ class _SplashScreenState extends State<SplashScreen>
 
   static const colorizeTextStyle = TextStyle(fontSize: 50);
 
+  bool _isPrecaching = false;
+
+  final List<String> imagesToPrecache = [
+    'assets/persona.jpg',
+    'assets/pareja_2.jpg',
+    'assets/pareja_7.jpg',
+    'assets/pareja_6.jpeg',
+    'assets/pareja_9.jpg',
+    'assets/pareja_14.jpg',
+    'assets/pareja_15.jpg',
+    'assets/pareja_13.jpg',
+    'assets/pareja_12.jpg',
+    'assets/pareja_4.jpg',
+    'assets/pareja_10.jpg',
+    'assets/pareja_11.jpg',
+  ];
+
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-
     Future.delayed(const Duration(milliseconds: 3500), () {
       NavigationService().pushReplacementNamed(SignInUpScreen.routeName);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isPrecaching) {
+      _isPrecaching = true;
+      _precacheEverything();
+    }
+  }
+
+  Future<void> _precacheEverything() async {
+    for (String img in imagesToPrecache) {
+      precacheImage(ResizeImage(AssetImage(img), width: 400), context);
+    }
   }
 
   @override
