@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:protolove/service/service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -41,7 +41,7 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) { 
       if (mounted) {
         setState(() {
           imagesReady = true;
@@ -170,6 +170,7 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                   textColor: Colors.white,
                   color: AppColors().buttonColor,
                   onPressed: () {
+                    //NavigationService().pushNamed(RegisterNameScreen.routeName);
                     Navigator.pushNamed(context, RegisterScreen.routeName);
                   },
                 ),

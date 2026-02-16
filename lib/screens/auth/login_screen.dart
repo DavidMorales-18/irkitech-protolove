@@ -43,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } on AuthException catch (e) {
+      print(e);
       if (e.message.contains('Invalid login credentials')) {
         AppMessages.error(
           context,

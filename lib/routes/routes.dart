@@ -11,6 +11,7 @@ class AppRoutes {
       HomeScreen.routeName: (context) => const HomeScreen(),
       SignInUpScreen.routeName: (context) => SignInUpScreen(),
       RegisterScreen.routeName: (context) => const RegisterScreen(),
+      RegisterNameScreen.routeName: (context) => const RegisterNameScreen(),
     };
   }
 }

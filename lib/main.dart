@@ -27,6 +27,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => AppService(PreferencesService())..init(),
         ),
+        ChangeNotifierProvider(create: (_) => AuthService()),
       ],
       child: const MyApp(),
     ),

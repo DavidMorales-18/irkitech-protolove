@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:protolove/widgets/widgets.dart';
 import 'package:protolove/utils/app_messages.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../../service/service.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = 'register';
@@ -16,59 +18,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  final supabase = Supabase.instance.client;
-  bool isLoading = false;
-
-  Future<void> _register() async {
-    if (_emailController.text.isEmpty ||
-        _passwordController.text.isEmpty ||
-        _confirmPasswordController.text.isEmpty) {
-      AppMessages.info(context, 'Completa todos los campos ✍️');
-      return;
-    }
-
-    if (_passwordController.text != _confirmPasswordController.text) {
-      AppMessages.error(context, 'Las contraseñas no coinciden 🔐');
-      return;
-    }
-
-    if (_passwordController.text.length < 6) {
-      AppMessages.info(
-        context,
-        'La contraseña debe tener al menos 6 caracteres 🔒',
-      );
-      return;
-    }
-
-    setState(() => isLoading = true);
-
-    try {
-      final response = await supabase.auth.signUp(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-
-      if (response.user != null && mounted) {
-        AppMessages.success(
-          context,
-          'Cuenta creada 🎉\nRevisa tu correo para confirmar 💌',
-        );
-
-        Navigator.pop(context); // vuelve al login
-      }
-    } on AuthException catch (e) {
-      if (e.message.contains('already registered')) {
-        AppMessages.error(context, 'Este correo ya está registrado 📧');
-      } else {
-        AppMessages.error(context, 'No pudimos crear la cuenta 😕');
-      }
-    } catch (_) {
-      AppMessages.error(context, 'Error inesperado ⚠️\nInténtalo más tarde.');
-    } finally {
-      if (mounted) setState(() => isLoading = false);
-    }
-  }
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -79,6 +28,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -155,8 +106,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               /// REGISTER BUTTON
               PrimaryButton(
-                text: isLoading ? 'Creando cuenta...' : 'Registrar',
-                onPressed: isLoading ? null : _register,
+                text: authService.isLoading ? 'Creando cuenta...' : 'Registrar',
+                onPressed:
+                    authService.isLoading
+                        ? null
+                        : () async {
+                          if (_emailController.text.isEmpty ||
+                              _passwordController.text.isEmpty ||
+                              _confirmPasswordController.text.isEmpty) {
+                            AppMessages.info(
+                              context,
+                              'Completa todos los campos ✍️',
+                            );
+                            return;
+                          }
+
+                          if (_passwordController.text !=
+                              _confirmPasswordController.text) {
+                            AppMessages.error(
+                              context,
+                              'Las contraseñas no coinciden 🔐',
+                            );
+                            return;
+                          }
+
+                          if (_passwordController.text.length < 6) {
+                            AppMessages.info(
+                              context,
+                              'La contraseña debe tener al menos 6 caracteres 🔒',
+                            );
+                            return;
+                          }
+
+                          await authService.register(
+                            _emailController.text,
+                            _passwordController.text,
+                            context,
+                          );
+                        },
               ),
 
               const SizedBox(height: 20),
